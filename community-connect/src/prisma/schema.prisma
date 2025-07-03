@@ -8,37 +8,38 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  email     String   @unique
-  name      String
-  avatar    String?
-  address   String
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  avatar       String?
+  password     String
+  address      String
   neighborhood String
-  bio       String?
-  verified  Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  bio          String?
+  verified     Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
-  posts     Post[]
-  comments  Comment[]
-  likes     Like[]
+  posts    Post[]
+  comments Comment[]
+  likes    Like[]
 }
 
 model Post {
-  id          String   @id @default(cuid())
-  title       String
-  content     String
-  category    String   // "General", "Safety", "For Sale", "Lost & Found", etc.
-  imageUrl    String?
-  urgent      Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  
-  authorId    String
-  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  
-  comments    Comment[]
-  likes       Like[]
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  category  String // "General", "Safety", "For Sale", "Lost & Found", etc.
+  imageUrl  String?
+  urgent    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  comments Comment[]
+  likes    Like[]
 }
 
 model Comment {
@@ -46,21 +47,21 @@ model Comment {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  authorId  String
-  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
-  
-  postId    String
-  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+
+  authorId String
+  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model Like {
   id     String @id @default(cuid())
   userId String
   postId String
-  
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
-  
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+
   @@unique([userId, postId])
 }

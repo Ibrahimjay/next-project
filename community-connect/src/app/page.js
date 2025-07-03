@@ -1,41 +1,44 @@
-'use client'
+"use client";
 // pages/index.js
-import { useState, useEffect } from 'react'
-import { useSession } from 'next-auth/react'
-import Layout from '../components/Layout'
-import PostForm from '../components/PostForm'
-import Post from '../components/Post'
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import Layout from "@/components/Layout";
+import PostForm from "@/components/PostForm";
+import Post from "@/components/Post";
+// import Layout from '../components/Layout'
+// import PostForm from '../components/PostForm'
+// import Post from '../components/Post'
 
 export default function Home() {
-  const { data: session } = useSession()
-  const [posts, setPosts] = useState([])
-  const [loading, setLoading] = useState(true)
+  const { data: session } = useSession();
+  const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   const fetchPosts = async () => {
     try {
-      const response = await fetch('/api/posts')
+      const response = await fetch("/api/posts");
       if (response.ok) {
-        const data = await response.json()
-        setPosts(data)
+        const data = await response.json();
+        setPosts(data);
       }
     } catch (error) {
-      console.error('Error fetching posts:', error)
+      console.error("Error fetching posts:", error);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    fetchPosts()
-  }, [])
+    fetchPosts();
+  }, []);
 
   const handlePostCreated = (newPost) => {
-    setPosts([newPost, ...posts])
-  }
+    setPosts([newPost, ...posts]);
+  };
 
   const handlePostUpdate = () => {
-    fetchPosts()
-  }
+    fetchPosts();
+  };
 
   if (loading) {
     return (
@@ -45,14 +48,14 @@ export default function Home() {
           <p className="mt-2 text-gray-500">Loading posts...</p>
         </div>
       </Layout>
-    )
+    );
   }
 
   return (
     <Layout>
       <div className="space-y-6">
         <PostForm onPostCreated={handlePostCreated} />
-        
+
         {posts.length === 0 ? (
           <div className="text-center py-12">
             <h3 className="text-lg font-medium text-gray-900 mb-2">
@@ -64,16 +67,12 @@ export default function Home() {
           </div>
         ) : (
           <div>
-            {posts.map(post => (
-              <Post 
-                key={post.id} 
-                post={post} 
-                onUpdate={handlePostUpdate}
-              />
+            {posts.map((post) => (
+              <Post key={post.id} post={post} onUpdate={handlePostUpdate} />
             ))}
           </div>
         )}
       </div>
     </Layout>
-  )
+  );
 }

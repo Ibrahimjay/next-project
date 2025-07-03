@@ -1,64 +1,64 @@
 // pages/auth/signup.js
-import { useState } from 'react'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
-import bcrypt from 'bcryptjs'
+"use client";
+import { useState } from "react";
+import Link from "next/link";
+import bcrypt from "bcryptjs";
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    password: '',
-    confirmPassword: '',
-    address: '',
-    neighborhood: ''
-  })
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const router = useRouter()
+    name: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    address: "",
+    neighborhood: "",
+  });
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setLoading(true)
-    setError('')
+    e.preventDefault();
+    setLoading(true);
+    setError("");
 
     if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match')
-      setLoading(false)
-      return
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
     }
 
     try {
-      const hashedPassword = await bcrypt.hash(formData.password, 12)
-      
-      const response = await fetch('/api/auth/signup', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
-          password: hashedPassword
-        })
-      })
+        }),
+      });
 
       if (response.ok) {
-        router.push('/auth/signin?message=Account created successfully')
+        router.push("/auth/signin?message=Account created successfully");
       } else {
-        const data = await response.json()
-        setError(data.error || 'Something went wrong')
+        const data = await response.json();
+        setError(data.error || "Something went wrong");
+        // setError("Something went wrong");
       }
     } catch (error) {
-      setError('Something went wrong')
+      console.log(error);
+      setError("Something went wrong");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value
-    })
-  }
+      [e.target.name]: e.target.value,
+    });
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -77,7 +77,7 @@ export default function SignUp() {
               {error}
             </div>
           )}
-          
+
           <div className="space-y-4">
             <input
               name="name"
@@ -141,14 +141,17 @@ export default function SignUp() {
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
             >
-              {loading ? 'Creating account...' : 'Sign up'}
+              {loading ? "Creating account..." : "Sign up"}
             </button>
           </div>
 
           <div className="text-center">
             <span className="text-sm text-gray-600">
-              Already have an account?{' '}
-              <Link href="/auth/signin" className="font-medium text-green-600 hover:text-green-500">
+              Already have an account?{" "}
+              <Link
+                href="/auth/signin"
+                className="font-medium text-green-600 hover:text-green-500"
+              >
                 Sign in
               </Link>
             </span>
@@ -156,5 +159,5 @@ export default function SignUp() {
         </form>
       </div>
     </div>
-  )
+  );
 }

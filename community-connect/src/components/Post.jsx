@@ -1,73 +1,73 @@
 // components/Post.js
-import { useState } from 'react'
-import { useSession } from 'next-auth/react'
-import { 
-  HeartIcon, 
-  ChatBubbleLeftIcon, 
+import { useState } from "react";
+import { useSession } from "next-auth/react";
+import {
+  HeartIcon,
+  ChatBubbleLeftIcon,
   ShareIcon,
-  ExclamationTriangleIcon 
-} from '@heroicons/react/24/outline'
-import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid'
+  ExclamationTriangleIcon,
+} from "@heroicons/react/24/outline";
+import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 
 export default function Post({ post, onUpdate }) {
-  const { data: session } = useSession()
-  const [showComments, setShowComments] = useState(false)
-  const [commentText, setCommentText] = useState('')
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { data: session } = useSession();
+  const [showComments, setShowComments] = useState(false);
+  const [commentText, setCommentText] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isLiked, setIsLiked] = useState(
-    post.likes?.some(like => like.userId === session?.user?.id) || false
-  )
+    post.likes?.some((like) => like.userId === session?.user?.id) || false
+  );
 
   const handleLike = async () => {
-    if (!session) return
+    if (!session) return;
 
     try {
       const response = await fetch(`/api/posts/${post.id}/like`, {
-        method: 'POST'
-      })
-      
+        method: "POST",
+      });
+
       if (response.ok) {
-        const { liked } = await response.json()
-        setIsLiked(liked)
-        onUpdate()
+        const { liked } = await response.json();
+        setIsLiked(liked);
+        onUpdate();
       }
     } catch (error) {
-      console.error('Error toggling like:', error)
+      console.error("Error toggling like:", error);
     }
-  }
+  };
 
   const handleComment = async (e) => {
-    e.preventDefault()
-    if (!session || !commentText.trim()) return
+    e.preventDefault();
+    if (!session || !commentText.trim()) return;
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
       const response = await fetch(`/api/posts/${post.id}/comments`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ content: commentText })
-      })
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: commentText }),
+      });
 
       if (response.ok) {
-        setCommentText('')
-        onUpdate()
+        setCommentText("");
+        onUpdate();
       }
     } catch (error) {
-      console.error('Error adding comment:', error)
+      console.error("Error adding comment:", error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const timeAgo = (date) => {
-    const now = new Date()
-    const posted = new Date(date)
-    const diffInMinutes = Math.floor((now - posted) / (1000 * 60))
-    
-    if (diffInMinutes < 60) return `${diffInMinutes}m`
-    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h`
-    return `${Math.floor(diffInMinutes / 1440)}d`
-  }
+    const now = new Date();
+    const posted = new Date(date);
+    const diffInMinutes = Math.floor((now - posted) / (1000 * 60));
+
+    if (diffInMinutes < 60) return `${diffInMinutes}m`;
+    if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h`;
+    return `${Math.floor(diffInMinutes / 1440)}d`;
+  };
 
   return (
     <div className="bg-white rounded-lg shadow mb-4">
@@ -77,7 +77,11 @@ export default function Post({ post, onUpdate }) {
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gray-300 rounded-full flex items-center justify-center">
               {post.author.avatar ? (
-                <img src={post.author.avatar} alt="" className="w-10 h-10 rounded-full" />
+                <img
+                  src={post.author.avatar}
+                  alt=""
+                  className="w-10 h-10 rounded-full"
+                />
               ) : (
                 <span className="text-sm font-medium text-gray-600">
                   {post.author.name.charAt(0)}
@@ -86,7 +90,9 @@ export default function Post({ post, onUpdate }) {
             </div>
             <div>
               <div className="flex items-center space-x-2">
-                <span className="font-medium text-gray-900">{post.author.name}</span>
+                <span className="font-medium text-gray-900">
+                  {post.author.name}
+                </span>
                 {post.author.verified && (
                   <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
                     <span className="text-white text-xs">✓</span>
@@ -104,7 +110,7 @@ export default function Post({ post, onUpdate }) {
               </div>
             </div>
           </div>
-          
+
           {post.urgent && (
             <div className="flex items-center space-x-1 text-red-600">
               <ExclamationTriangleIcon className="h-4 w-4" />
@@ -125,7 +131,7 @@ export default function Post({ post, onUpdate }) {
             <button
               onClick={handleLike}
               className={`flex items-center space-x-2 text-sm ${
-                isLiked ? 'text-red-600' : 'text-gray-500 hover:text-red-600'
+                isLiked ? "text-red-600" : "text-gray-500 hover:text-red-600"
               }`}
             >
               {isLiked ? (
@@ -169,7 +175,7 @@ export default function Post({ post, onUpdate }) {
                       onChange={(e) => setCommentText(e.target.value)}
                       placeholder="Write a comment..."
                       rows={2}
-                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                      className="w-full text-gray-500 p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
                     />
                     <div className="mt-2 flex justify-end">
                       <button
@@ -177,7 +183,7 @@ export default function Post({ post, onUpdate }) {
                         disabled={!commentText.trim() || isSubmitting}
                         className="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-sm rounded-md disabled:opacity-50"
                       >
-                        {isSubmitting ? 'Posting...' : 'Comment'}
+                        {isSubmitting ? "Posting..." : "Comment"}
                       </button>
                     </div>
                   </div>
@@ -187,7 +193,7 @@ export default function Post({ post, onUpdate }) {
 
             {/* Comments List */}
             <div className="space-y-3">
-              {post.comments?.map(comment => (
+              {post.comments?.map((comment) => (
                 <div key={comment.id} className="flex space-x-3">
                   <div className="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center">
                     <span className="text-xs font-medium text-gray-600">
@@ -214,5 +220,5 @@ export default function Post({ post, onUpdate }) {
         )}
       </div>
     </div>
-  )
+  );
 }

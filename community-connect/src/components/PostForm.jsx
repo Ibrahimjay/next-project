@@ -1,49 +1,60 @@
-'use client'
+"use client";
 
 // components/PostForm.js
-import { useState } from 'react'
-import { useSession } from 'next-auth/react'
+import { useState } from "react";
+import { useSession } from "next-auth/react";
 
 export default function PostForm({ onPostCreated }) {
-  const { data: session } = useSession()
-  const [isOpen, setIsOpen] = useState(false)
+  const { data: session } = useSession();
+  const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
-    content: '',
-    category: 'General',
-    urgent: false
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
+    title: "",
+    content: "",
+    category: "General",
+    urgent: false,
+  });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const categories = [
-    'General', 'Safety & Crime', 'For Sale', 'Lost & Found', 
-    'Recommendations', 'Events', 'Free Stuff', 'Help Map'
-  ]
+    "General",
+    "Safety & Crime",
+    "For Sale",
+    "Lost & Found",
+    "Recommendations",
+    "Events",
+    "Free Stuff",
+    "Help Map",
+  ];
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    if (!session) return
+    e.preventDefault();
+    if (!session) return;
 
-    setIsSubmitting(true)
+    setIsSubmitting(true);
     try {
-      const response = await fetch('/api/posts', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      })
+      const response = await fetch("/api/posts", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
 
       if (response.ok) {
-        const newPost = await response.json()
-        onPostCreated(newPost)
-        setFormData({ title: '', content: '', category: 'General', urgent: false })
-        setIsOpen(false)
+        const newPost = await response.json();
+        onPostCreated(newPost);
+        setFormData({
+          title: "",
+          content: "",
+          category: "General",
+          urgent: false,
+        });
+        setIsOpen(false);
       }
     } catch (error) {
-      console.error('Error creating post:', error)
+      console.error("Error creating post:", error);
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   if (!session) {
     return (
@@ -52,7 +63,7 @@ export default function PostForm({ onPostCreated }) {
           Please sign in to create a post
         </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -71,8 +82,10 @@ export default function PostForm({ onPostCreated }) {
               type="text"
               placeholder="What's your post about?"
               value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+              onChange={(e) =>
+                setFormData({ ...formData, title: e.target.value })
+              }
+              className="w-full p-3 text-gray-500  border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
               required
             />
           </div>
@@ -81,9 +94,11 @@ export default function PostForm({ onPostCreated }) {
             <textarea
               placeholder="Share more details..."
               value={formData.content}
-              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, content: e.target.value })
+              }
               rows={4}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+              className="w-full p-3 text-gray-500  border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
               required
             />
           </div>
@@ -91,11 +106,15 @@ export default function PostForm({ onPostCreated }) {
           <div className="flex items-center justify-between mb-4">
             <select
               value={formData.category}
-              onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+              onChange={(e) =>
+                setFormData({ ...formData, category: e.target.value })
+              }
               className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500"
             >
-              {categories.map(category => (
-                <option key={category} value={category}>{category}</option>
+              {categories.map((category) => (
+                <option key={category} value={category}>
+                  {category}
+                </option>
               ))}
             </select>
 
@@ -103,7 +122,9 @@ export default function PostForm({ onPostCreated }) {
               <input
                 type="checkbox"
                 checked={formData.urgent}
-                onChange={(e) => setFormData({ ...formData, urgent: e.target.checked })}
+                onChange={(e) =>
+                  setFormData({ ...formData, urgent: e.target.checked })
+                }
                 className="mr-2 h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded"
               />
               <span className="text-sm text-gray-700">Mark as urgent</span>
@@ -123,11 +144,11 @@ export default function PostForm({ onPostCreated }) {
               disabled={isSubmitting}
               className="px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg disabled:opacity-50"
             >
-              {isSubmitting ? 'Posting...' : 'Post'}
+              {isSubmitting ? "Posting..." : "Post"}
             </button>
           </div>
         </form>
       )}
     </div>
-  )
+  );
 }
