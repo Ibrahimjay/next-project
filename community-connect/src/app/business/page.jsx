@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { HeartIcon, MagnifyingGlassIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';

@@ -124,7 +124,7 @@ export default function Layout({ children }) {
               </li>
               <li>
                 <Link
-                  href="/marketplace"
+                  href="/business"
                   className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 text-gray-900"
                 >
                   <ShoppingCartIcon className="h-5 w-5 text-gray-600" />
@@ -133,7 +133,7 @@ export default function Layout({ children }) {
               </li>
               <li>
                 <Link
-                  href="/issues"
+                  href="/issuereports"
                   className="flex items-center space-x-3 p-3 rounded-lg hover:bg-gray-50 text-gray-900"
                 >
                   <ExclamationTriangleIcon className="h-5 w-5 text-gray-600" />
