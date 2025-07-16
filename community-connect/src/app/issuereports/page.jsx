@@ -9,7 +9,7 @@ const Page = () => {
           <h3 className="text-lg font-medium text-gray-900 mb-2">
             No settings yet
           </h3>
-          <p className="text-gray-500">Your settings with be list here</p>
+          <p className="text-gray-500">Your Updates with be list here</p>
         </div>
       </div>
     </Layout>
