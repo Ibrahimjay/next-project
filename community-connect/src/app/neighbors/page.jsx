@@ -11,6 +11,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 import Image from 'next/image';
+import Layout from '@/components/Layout';
 
 // Sample news data
 const sampleNews = [
@@ -151,6 +152,7 @@ export default function LocalNewsPage() {
 
   const NewsCard = ({ newsItem }) => {
     return (
+      
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 overflow-hidden hover:shadow-md transition-shadow">
         {/* Header */}
         <div className="p-4 pb-3">
@@ -287,6 +289,7 @@ export default function LocalNewsPage() {
   };
 
   return (
+    <Layout>
     <div className="max-w-2xl mx-auto px-4 py-6">
       {/* Header */}
       <div className="flex items-center space-x-3 mb-6">
@@ -309,6 +312,6 @@ export default function LocalNewsPage() {
           Load More News
         </button>
       </div>
-    </div>
+    </div>  </Layout>
   );
 }

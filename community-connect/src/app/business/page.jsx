@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { HeartIcon, MagnifyingGlassIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
 import Image from 'next/image';
+import Layout from '@/components/Layout';
 
 // Sample marketplace data
 const sampleListings = [
@@ -268,6 +269,7 @@ export default function MarketplacePage() {
   };
 
   return (
+    <Layout>
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
       {/* Header Navigation */}
       <div className="border-b border-gray-200 mb-6">
@@ -373,6 +375,6 @@ export default function MarketplacePage() {
           Load More Listings
         </button>
       </div>
-    </div>
+    </div> </Layout>
   );
 }
