@@ -42,7 +42,7 @@ const sampleNews = [
     },
     timePosted: '',
     headline: 'Discover new income for your business, right next door',
-    image: '/api/placeholder/600/300',
+   image: '/images/news.jpg',
     content: 'Amazon Hub Delivery is looking for New York partners to make local deliveries and earn extra money for their businesses.',
     likes: 0,
     comments: 0,
