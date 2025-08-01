@@ -4,9 +4,21 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 
 // GET /api/posts
-export async function GET() {
+export async function GET(req) {
+
   try {
+  const { searchParams } = new URL(req.url);
+  const category = searchParams.get('category');
+  const authorId = searchParams.get('authorId');
+  const urgent = searchParams.get('urgent');
+  const neighborhood = searchParams.get('neighborhood');
+
     const posts = await prisma.post.findMany({
+      where: {
+        category: category || undefined,
+        authorId: authorId || undefined,
+        urgent: urgent === 'true' ? true : urgent === 'false' ? false : undefined,
+      },
       include: {
         author: {
           select: {
