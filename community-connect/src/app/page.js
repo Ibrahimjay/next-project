@@ -71,7 +71,7 @@ export default function Home() {
 
   useEffect(() => {
     fetchPosts();
-  });
+  }, [filters, fetchPosts]);
 
   const handlePostCreated = (newPost) => {
     setPosts((prevPosts) => [newPost, ...prevPosts]);
