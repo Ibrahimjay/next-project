@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   HeartIcon,
   ChatBubbleLeftIcon,
@@ -12,6 +12,7 @@ import {
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Layout from "@/components/Layout";
+import { useQueries, useQuery } from "@tanstack/react-query";
 
 // Sample news data
 const sampleNews = [
@@ -149,7 +150,21 @@ const sampleNews = [
 ];
 
 export default function LocalNewsPage() {
-  const [news, setNews] = useState(sampleNews);
+  const [news, setNews] = useState();
+  const { data, isSuccess } = useQuery({
+    queryKey: "news",
+    queryFn: async () => {
+      const response = await fetch("/api/news");
+      const data = await response.json();
+      return data;
+    },
+  });
+
+  useEffect(() => {
+    if (!data?.error && isSuccess) {
+      setNews(data);
+    }
+  });
 
   const toggleLike = (id) => {
     setNews(
@@ -164,6 +179,8 @@ export default function LocalNewsPage() {
       )
     );
   };
+
+  console.log(JSON.stringify(data));
 
   const NewsCard = ({ newsItem }) => {
     return (
@@ -239,12 +256,27 @@ export default function LocalNewsPage() {
         </div>
 
         {/* News Image */}
-        {newsItem.image && (
+        {!newsItem.image ? (
           <div className="px-4 pb-3">
             <div className="relative h-64 bg-gray-200 rounded-lg overflow-hidden">
               <div className="w-full h-full bg-gradient-to-br from-gray-300 via-gray-400 to-gray-500 flex items-center justify-center">
-                <span className="text-white text-sm">News Image</span>
+                <span className="text-white text-sm">No Image</span>
               </div>
+              {newsItem.source && (
+                <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                  {newsItem.source}
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          <div className="px-4 pb-3">
+            <div className="relative h-64 bg-gray-200 rounded-lg overflow-hidden">
+              <img
+                src={newsItem.image}
+                className="w-full h-full bg-gradient-to-br object-cover from-gray-300 via-gray-400 to-gray-500 flex items-center justify-center"
+              />
+              <span className="text-white text-sm">News Image</span>
               {newsItem.source && (
                 <div className="absolute bottom-2 left-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                   {newsItem.source}
@@ -315,7 +347,7 @@ export default function LocalNewsPage() {
 
         {/* News Feed */}
         <div className="space-y-4">
-          {news.map((newsItem) => (
+          {news?.map((newsItem) => (
             <NewsCard key={newsItem.id} newsItem={newsItem} />
           ))}
         </div>

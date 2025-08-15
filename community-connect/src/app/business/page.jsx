@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   HeartIcon,
   MagnifyingGlassIcon,
@@ -9,6 +9,7 @@ import {
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 import Layout from "@/components/Layout";
+import { useQuery } from "@tanstack/react-query";
 
 // Sample marketplace data
 const sampleListings = [
@@ -172,12 +173,27 @@ const sampleListings = [
 ];
 
 export default function MarketplacePage() {
-  const [listings, setListings] = useState(sampleListings);
+  const [listings, setListings] = useState();
+  const { data, isSuccess } = useQuery({
+    queryKey: "news",
+    queryFn: async () => {
+      const response = await fetch("/api/business");
+      const data = await response.json();
+      return data;
+    },
+  });
+
   const [activeTab, setActiveTab] = useState("All listings");
   const [selectedCategory, setSelectedCategory] = useState("All categories");
   const [priceFilter, setPriceFilter] = useState("Free");
   const [distanceFilter, setDistanceFilter] = useState("10 mi");
   const [sortBy, setSortBy] = useState("Most Relevant");
+
+  useEffect(() => {
+    if (!data?.error && isSuccess) {
+      setListings(data);
+    }
+  });
 
   const toggleFavorite = (id) => {
     setListings(
@@ -364,7 +380,7 @@ export default function MarketplacePage() {
 
         {/* Listings Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {listings.map((listing) => (
+          {listings?.map((listing) => (
             <MarketplaceCard key={listing.id} listing={listing} />
           ))}
         </div>

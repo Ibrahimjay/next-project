@@ -24,6 +24,7 @@ model User {
   posts    Post[]
   comments Comment[]
   likes    Like[]
+  news     News[]
 }
 
 model Post {
@@ -62,4 +63,39 @@ model Like {
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
 
   @@unique([userId, postId])
+}
+
+model Business {
+  id            Int      @id @default(autoincrement()) // ✅ this is required
+  title         String
+  price         String
+  image         String
+  location      String?
+  timePosted    String?
+  distance      Float?
+  isFavorited   Boolean
+  isFree        Boolean
+  isAd          Boolean?
+  originalPrice String?
+}
+
+model News {
+  id          Int      @id @default(autoincrement())
+  headline    String
+  image       String
+  content     String
+  timePosted  String
+  source      String?
+  likes       Int
+  comments    Int
+  isLiked     Boolean  @default(false)
+  isSponsored Boolean? @default(false)
+  isPinned    Boolean? @default(false)
+  ctaText     String?
+
+  publisher   User   @relation(fields: [publisherId], references: [id])
+  publisherId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
