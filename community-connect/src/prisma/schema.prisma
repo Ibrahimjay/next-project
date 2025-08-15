@@ -12,6 +12,7 @@ model User {
   email        String   @unique
   name         String
   avatar       String?
+  role         String   @default("user")
   password     String
   address      String
   neighborhood String
@@ -27,11 +28,8 @@ model User {
 
 model Post {
   id        String   @id @default(cuid())
-  title     String
   content   String
-  category  String // "General", "Safety", "For Sale", "Lost & Found", etc.
   imageUrl  String?
-  urgent    Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

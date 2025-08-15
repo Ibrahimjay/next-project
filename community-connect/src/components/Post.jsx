@@ -11,7 +11,7 @@ import {
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
 
-export default function Post({ post, onUpdate }) {
+export default function Post({ post }) {
   const { data: session } = useSession();
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
@@ -31,7 +31,6 @@ export default function Post({ post, onUpdate }) {
       if (response.ok) {
         const { liked } = await response.json();
         setIsLiked(liked);
-        onUpdate();
       }
     } catch (error) {
       console.error("Error toggling like:", error);
@@ -52,7 +51,6 @@ export default function Post({ post, onUpdate }) {
 
       if (response.ok) {
         setCommentText("");
-        onUpdate();
       }
     } catch (error) {
       console.error("Error adding comment:", error);
@@ -73,14 +71,14 @@ export default function Post({ post, onUpdate }) {
 
   const getCategoryColor = (category) => {
     const colors = {
-      'Safety & Crime': 'bg-red-100 text-red-800',
-      'General': 'bg-blue-100 text-blue-800',
-      'For Sale': 'bg-green-100 text-green-800',
-      'Lost & Found': 'bg-purple-100 text-purple-800',
-      'Recommendations': 'bg-yellow-100 text-yellow-800',
-      'Events': 'bg-pink-100 text-pink-800',
+      "Safety & Crime": "bg-red-100 text-red-800",
+      General: "bg-blue-100 text-blue-800",
+      "For Sale": "bg-green-100 text-green-800",
+      "Lost & Found": "bg-purple-100 text-purple-800",
+      Recommendations: "bg-yellow-100 text-yellow-800",
+      Events: "bg-pink-100 text-pink-800",
     };
-    return colors[category] || 'bg-gray-100 text-gray-800';
+    return colors[category] || "bg-gray-100 text-gray-800";
   };
 
   return (
@@ -146,7 +144,11 @@ export default function Post({ post, onUpdate }) {
 
         {/* Category Badge */}
         <div className="mb-3">
-          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(post.category)}`}>
+          <span
+            className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getCategoryColor(
+              post.category
+            )}`}
+          >
             {post.category}
           </span>
         </div>
@@ -191,9 +193,7 @@ export default function Post({ post, onUpdate }) {
             <button
               onClick={handleLike}
               className={`flex items-center space-x-2 text-sm transition-colors ${
-                isLiked 
-                  ? "text-red-600" 
-                  : "text-gray-500 hover:text-red-600"
+                isLiked ? "text-red-600" : "text-gray-500 hover:text-red-600"
               }`}
             >
               {isLiked ? (

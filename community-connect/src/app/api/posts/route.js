@@ -5,20 +5,8 @@ import { authOptions } from "@/lib/auth";
 
 // GET /api/posts
 export async function GET(req) {
-
   try {
-  const { searchParams } = new URL(req.url);
-  const category = searchParams.get('category');
-  const authorId = searchParams.get('authorId');
-  const urgent = searchParams.get('urgent');
-  const neighborhood = searchParams.get('neighborhood');
-
     const posts = await prisma.post.findMany({
-      where: {
-        category: category || undefined,
-        authorId: authorId || undefined,
-        urgent: urgent === 'true' ? true : urgent === 'false' ? false : undefined,
-      },
       include: {
         author: {
           select: {
@@ -55,48 +43,45 @@ export async function GET(req) {
   }
 }
 
-// POST /api/posts
 export async function POST(req) {
   const session = await getServerSession(authOptions);
-
   if (!session) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  try {
-    const body = await req.json();
-    const { title, content, category, urgent } = body;
+  const formData = await req.formData();
+  const content = formData.get("content");
+  const files = formData.getAll("files");
 
-    const post = await prisma.post.create({
-      data: {
-        title,
-        content,
-        category,
-        urgent: urgent || false,
-        authorId: session.user.id,
-      },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            avatar: true,
-            neighborhood: true,
-            verified: true,
-          },
-        },
-        _count: {
-          select: { comments: true, likes: true },
-        },
-      },
-    });
+  let imageUrl = null;
 
-    return NextResponse.json(post, { status: 201 });
-  } catch (error) {
-    console.error("Create post error:", error);
-    return NextResponse.json(
-      { error: "Failed to create post" },
-      { status: 500 }
-    );
-  }
+  // if (files.length > 0) {
+  //   // You need to upload the file(s) to storage (e.g., S3, Cloudinary)
+  //   // Here's a placeholder:
+  //   imageUrl = await uploadFileToStorage(files[0]); // Implement this
+  // }
+
+  const post = await prisma.post.create({
+    data: {
+      content,
+      imageUrl,
+      authorId: session.user.id,
+    },
+    include: {
+      author: {
+        select: {
+          id: true,
+          name: true,
+          avatar: true,
+          neighborhood: true,
+          verified: true,
+        },
+      },
+      _count: {
+        select: { comments: true, likes: true },
+      },
+    },
+  });
+
+  return NextResponse.json(post, { status: 201 });
 }
