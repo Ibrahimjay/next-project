@@ -1,4 +1,6 @@
 "use client";
+
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,81 +12,91 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
   Dropzone,
   DropzoneContent,
   DropzoneEmptyState,
 } from "@/components/ui/shadcn-io/dropzone";
-
 import Image from "next/image";
-import { useState } from "react";
-import { DropzoneOptions } from "react-dropzone";
 import { Textarea } from "../ui/textarea";
 
 export function PostFormCommand() {
-  const [files, setFiles] = useState();
-  const [content, setContent] = useState();
+  const [files, setFiles] = useState([]);
+  const [content, setContent] = useState("");
+  const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleDrop = (files) => {
-    console.log(files);
+    console.log("Dropped files:", files);
     setFiles(files);
   };
 
   const handleSubmit = async (e) => {
+    e.preventDefault(); // prevent page reload
     console.log("submitting....");
+    setLoading(true);
 
     const formData = new FormData();
     formData.append("content", content);
 
     if (files?.length) {
       files.forEach((file) => {
-        formData.append("files", file); // Server should handle multiple files under `files[]`
+        formData.append("files", file);
       });
     }
 
-    console.log(formData);
+    try {
+      const response = await fetch("/api/posts", {
+        method: "POST",
+        body: formData,
+      });
 
-    const response = await fetch("/api/posts", {
-      method: "POST",
-      body: formData,
-    });
+      if (!response.ok) {
+        console.error("Failed to submit post");
+        return;
+      }
 
-    console.log(response);
+      const post = await response.json();
+      console.log("Post created:", post);
 
-    if (!response.ok) {
-      console.error("Failed to submit post");
-      return;
+      // ✅ close dialog after success
+      setOpen(false);
+
+      // reset form
+      setContent("");
+      setFiles([]);
+    } catch (err) {
+      console.error("Error submitting post:", err);
+    } finally {
+      setLoading(true);
     }
-
-    const post = await response.json();
-    console.log("Post created:", post);
   };
 
   return (
-    <Dialog>
-      <form className="w-full" onSubmit={handleSubmit}>
-        <DialogTrigger asChild>
-          <Button
-            type={"button"}
-            variant={"outline"}
-            className="h-12 w-full rounded-full text-left justify-start"
-          >
-            What&apos;s on your mind
-          </Button>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button
+          type="button"
+          variant="outline"
+          className="h-12 w-full rounded-full text-left justify-start"
+        >
+          What&apos;s on your mind
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-[425px]">
+        <form className="w-full" onSubmit={handleSubmit}>
           <DialogHeader>
             <DialogTitle>Post</DialogTitle>
             <DialogDescription>What&apos;s on your mind</DialogDescription>
           </DialogHeader>
+
           <div className="grid gap-4">
             <Textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Write something..."
             />
+
             <Dropzone
               accept={{ "image/*": [] }}
               maxFiles={10}
@@ -97,7 +109,8 @@ export function PostFormCommand() {
               <DropzoneEmptyState />
               <DropzoneContent />
             </Dropzone>
-            {files && files.length > 0 && (
+
+            {files.length > 0 && (
               <div className="flex gap-2 flex-wrap">
                 {files.map((file, idx) => (
                   <Image
@@ -112,18 +125,19 @@ export function PostFormCommand() {
               </div>
             )}
           </div>
+
           <DialogFooter>
             <DialogClose asChild>
               <Button type="button" variant="outline">
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="button" onClick={() => handleSubmit()}>
+            <Button disabled={loading} type="submit">
               Save changes
             </Button>
           </DialogFooter>
-        </DialogContent>
-      </form>
+        </form>
+      </DialogContent>
     </Dialog>
   );
 }
