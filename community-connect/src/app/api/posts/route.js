@@ -51,9 +51,7 @@ export async function POST(req) {
 
   const formData = await req.formData();
   const content = formData.get("content");
-  const files = formData.getAll("files");
-
-  let imageUrl = null;
+  const imageUrl = formData.get("imageUrl") || null;
 
   // if (files.length > 0) {
   //   // You need to upload the file(s) to storage (e.g., S3, Cloudinary)

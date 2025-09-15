@@ -10,12 +10,22 @@ import {
 } from "@heroicons/react/24/outline";
 import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
 import Image from "next/image";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Button } from "./ui/button";
 
 export default function Post({ post }) {
   const { data: session } = useSession();
   const [showComments, setShowComments] = useState(false);
   const [commentText, setCommentText] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [open, setOpen] = useState(false);
   const [isLiked, setIsLiked] = useState(
     post.likes?.some((like) => like.userId === session?.user?.id) || false
   );
@@ -35,6 +45,22 @@ export default function Post({ post }) {
     } catch (error) {
       console.error("Error toggling like:", error);
     }
+  };
+
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await fetch(`/api/posts/${post.id}/`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: commentText }),
+      });
+    } catch (error) {}
+    const response = await fetch(`/api/posts/${post.id}/`, {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ content: commentText }),
+    });
   };
 
   const handleComment = async (e) => {
@@ -136,9 +162,22 @@ export default function Post({ post }) {
                 <span className="text-xs font-medium">URGENT</span>
               </div>
             )}
-            <button className="p-1 hover:bg-gray-100 rounded-full">
-              <EllipsisHorizontalIcon className="h-5 w-5 text-gray-400" />
-            </button>
+            <DropdownMenu open={open} onOpenChange={setOpen}>
+              <DropdownMenuTrigger sChild>
+                <Button variant="ghost">
+                  <EllipsisHorizontalIcon className="h-5 w-5 text-gray-400" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="w-32 mr-16">
+                {/* <DropdownMenuLabel>Appearance</DropdownMenuLabel> */}
+                <DropdownMenuCheckboxItem
+                  onClick={handleDelete}
+                  className="py-1 pr-1 pl-2"
+                >
+                  Delete
+                </DropdownMenuCheckboxItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
@@ -175,10 +214,10 @@ export default function Post({ post }) {
         </div>
 
         {/* Post Image (if exists) */}
-        {post.image && (
+        {post.imageUrl && (
           <div className="mb-4 -mx-1">
             <Image
-              src={post.image}
+              src={post.imageUrl}
               alt="Post image"
               width={600}
               height={400}

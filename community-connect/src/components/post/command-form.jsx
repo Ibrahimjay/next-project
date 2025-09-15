@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/shadcn-io/dropzone";
 import Image from "next/image";
 import { Textarea } from "../ui/textarea";
+import { storage } from "@/lib/appwrite";
+import { ID } from "appwrite";
 
 export function PostFormCommand() {
   const [files, setFiles] = useState([]);
@@ -46,6 +48,22 @@ export function PostFormCommand() {
     }
 
     try {
+      console.log("appwrite payload", files[0]);
+      const result = await storage.createFile(
+        process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID,
+        ID.unique(),
+        files[0]
+      );
+
+      const viewUrl = storage.getFileView(
+        process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID,
+        result.$id
+      );
+      console.log("viewUrl: ", viewUrl);
+
+      console.log("result: ", result);
+
+      formData.append("imageUrl", viewUrl);
       const response = await fetch("/api/posts", {
         method: "POST",
         body: formData,
@@ -68,7 +86,7 @@ export function PostFormCommand() {
     } catch (err) {
       console.error("Error submitting post:", err);
     } finally {
-      setLoading(true);
+      setLoading(false);
     }
   };
 

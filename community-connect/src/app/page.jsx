@@ -20,6 +20,7 @@ import { useSession } from "next-auth/react";
 import React from "react";
 import Post from "@/components/Post";
 import { PostFormCommand } from "@/components/post/command-form";
+import { client } from "@/lib/appwrite";
 
 const Page = () => {
   const { data: session, status } = useSession();
