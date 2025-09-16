@@ -25,6 +25,7 @@ model User {
   comments Comment[]
   likes    Like[]
   news     News[]
+  Report   Report[]
 }
 
 model Post {
@@ -99,4 +100,35 @@ model News {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum Priority {
+  low
+  medium
+  high
+}
+
+enum Status {
+  reported
+  in_progress
+  resolved
+}
+
+model Report {
+  id          String   @id @default(cuid())
+  title       String
+  category    String
+  description String
+  location    String
+  priority    Priority @default(medium)
+  status      Status   @default(reported)
+  photos      String[] // Assuming you store image URLs or IDs
+  name        String // From contactInfo
+  email       String
+  phone       String? // Optional
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  publisher   User   @relation(fields: [publisherId], references: [id])
+  publisherId String
 }

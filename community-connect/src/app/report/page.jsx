@@ -11,6 +11,8 @@ import {
   Users,
 } from "lucide-react";
 import Layout from "@/components/Layout";
+import { useQuery } from "@tanstack/react-query";
+import { formatDistanceToNow } from "date-fns";
 
 const IssueReportingPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -54,6 +56,17 @@ const IssueReportingPage = () => {
       priority: "low",
     },
   ]);
+
+  const { data, isPending } = useQuery({
+    queryKey: ["reportRecent"],
+    queryFn: async () => {
+      const response = await fetch(`/api/report/`);
+      const data = await response.json();
+      return data;
+    },
+  });
+
+  console.log("report: ", data);
 
   const categories = [
     {
@@ -590,33 +603,39 @@ const IssueReportingPage = () => {
                   Recent Reports
                 </h3>
                 <div className="space-y-3">
-                  {recentReports.slice(0, 5).map((report) => (
-                    <div
-                      key={report.id}
-                      className={`p-3 rounded-lg border-l-4 ${getPriorityColor(
-                        report.priority
-                      )} bg-gray-50`}
-                    >
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <h4 className="font-medium text-gray-900 text-sm">
-                            {report.title}
-                          </h4>
-                          <p className="text-xs text-gray-500 mt-1">
-                            {report.date}
-                          </p>
-                        </div>
-                        <div
-                          className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${getStatusColor(
-                            report.status
-                          )}`}
-                        >
-                          {getStatusIcon(report.status)}
-                          <span className="capitalize">{report.status}</span>
+                  {data ? (
+                    data.slice(0, 5).map((report) => (
+                      <div
+                        key={report.id}
+                        className={`p-3 rounded-lg border-l-4 ${getPriorityColor(
+                          report.priority
+                        )} bg-gray-50`}
+                      >
+                        <div className="flex items-start justify-between">
+                          <div className="flex-1">
+                            <h4 className="font-medium text-gray-900 text-sm">
+                              {report.title}
+                            </h4>
+                            <p className="text-xs text-gray-500 mt-1">
+                              {formatDistanceToNow(new Date(report.createdAt), {
+                                addSuffix: true,
+                              })}
+                            </p>
+                          </div>
+                          <div
+                            className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${getStatusColor(
+                              report.status
+                            )}`}
+                          >
+                            {getStatusIcon(report.status)}
+                            <span className="capitalize">{report.status}</span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    ))
+                  ) : (
+                    <></>
+                  )}
                 </div>
               </div>
 
