@@ -52,17 +52,20 @@ export async function POST(req) {
   const formData = await req.formData();
   const content = formData.get("content");
   const imageUrl = formData.get("imageUrl") || null;
+  const imageStoreID = formData.get("imageStoreID") || null;
 
-  // if (files.length > 0) {
-  //   // You need to upload the file(s) to storage (e.g., S3, Cloudinary)
-  //   // Here's a placeholder:
-  //   imageUrl = await uploadFileToStorage(files[0]); // Implement this
-  // }
+  console.log({
+    content,
+    imageUrl,
+    imageStoreID,
+    authorId: session.user.id,
+  });
 
   const post = await prisma.post.create({
     data: {
       content,
       imageUrl,
+      imageStoreID,
       authorId: session.user.id,
     },
     include: {

@@ -59,11 +59,9 @@ export function PostFormCommand() {
         process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID,
         result.$id
       );
-      console.log("viewUrl: ", viewUrl);
-
-      console.log("result: ", result);
 
       formData.append("imageUrl", viewUrl);
+      formData.append("imageStoreID", result.$id);
       const response = await fetch("/api/posts", {
         method: "POST",
         body: formData,

@@ -1,8 +1,19 @@
 // app/api/posts/[id]/route.ts
-import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server';
+import { storage } from "@/lib/appwrite";
+import { prisma } from "@/lib/prisma";
+import { NextResponse } from "next/server";
 
 export async function GET(_, { params }) {
+  const { id } = await params;
+  if (id) {
+    const post = await prisma.post.findUnique({
+      where: { id: params.id },
+      include: { author: true },
+    });
+    return NextResponse.json(post);
+  } else {
+    return new NextResponse(null, { status: 404 });
+  }
   const post = await prisma.post.findUnique({
     where: { id: params.id },
     include: { author: true },
@@ -17,6 +28,20 @@ export async function PUT(req, { params }) {
 }
 
 export async function DELETE(_, { params }) {
-  await prisma.post.delete({ where: { id: params.id } });
-  return new NextResponse(null, { status: 204 });
+  const { id } = await params;
+  if (id) {
+    const post = await prisma.post.findUnique({
+      where: { id },
+      select: { imageStoreID: true },
+    });
+    console.log("post: ", post);
+    await prisma.post.delete({ where: { id } });
+    await storage.deleteFile(
+      process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID,
+      post.imageStoreID
+    );
+    return new NextResponse(null, { status: 204 });
+  } else {
+    return new NextResponse(null, { status: 400 });
+  }
 }
