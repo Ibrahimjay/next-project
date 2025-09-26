@@ -8,39 +8,36 @@ datasource db {
 }
 
 model User {
-  id           String   @id @default(cuid())
-  email        String   @unique
+  id           String    @id @default(cuid())
+  email        String    @unique
   name         String
   avatar       String?
-  role         String   @default("user")
   password     String
   address      String
   neighborhood String
   bio          String?
-  verified     Boolean  @default(false)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  posts    Post[]
-  comments Comment[]
-  likes    Like[]
-  news     News[]
-  Report   Report[]
+  verified     Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  role         String    @default("user")
+  comments     Comment[]
+  likes        Like[]
+  news         News[]
+  posts        Post[]
+  Report       Report[]
 }
 
 model Post {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   content      String
   imageUrl     String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  authorId     String
   imageStoreID String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  authorId String
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-
-  comments Comment[]
-  likes    Like[]
+  comments     Comment[]
+  likes        Like[]
+  author       User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
 }
 
 model Comment {
@@ -48,37 +45,20 @@ model Comment {
   content   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  authorId String
-  author   User   @relation(fields: [authorId], references: [id], onDelete: Cascade)
-
-  postId String
-  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  authorId  String
+  postId    String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
 }
 
 model Like {
   id     String @id @default(cuid())
   userId String
   postId String
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, postId])
-}
-
-model Business {
-  id            Int      @id @default(autoincrement()) // ✅ this is required
-  title         String
-  price         String
-  image         String
-  location      String?
-  timePosted    String?
-  distance      Float?
-  isFavorited   Boolean
-  isFree        Boolean
-  isAd          Boolean?
-  originalPrice String?
 }
 
 model News {
@@ -91,15 +71,45 @@ model News {
   likes       Int
   comments    Int
   isLiked     Boolean  @default(false)
-  isSponsored Boolean? @default(false)
-  isPinned    Boolean? @default(false)
-  ctaText     String?
-
-  publisher   User   @relation(fields: [publisherId], references: [id])
   publisherId String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  ctaText     String?
+  isPinned    Boolean? @default(false)
+  isSponsored Boolean? @default(false)
+  publisher   User     @relation(fields: [publisherId], references: [id])
+}
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Report {
+  id          String   @id @default(cuid())
+  title       String
+  category    String
+  description String
+  location    String
+  priority    Priority @default(medium)
+  status      Status   @default(reported)
+  photos      String[]
+  name        String
+  email       String
+  phone       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  publisherId String
+  publisher   User     @relation(fields: [publisherId], references: [id])
+}
+
+model Business {
+  id            Int      @id @default(autoincrement())
+  title         String
+  price         String
+  image         String?
+  location      String?
+  timePosted    String?
+  distance      Float?
+  isFavorited   Boolean
+  isFree        Boolean
+  isAd          Boolean?
+  originalPrice String?
 }
 
 enum Priority {
@@ -112,23 +122,4 @@ enum Status {
   reported
   in_progress
   resolved
-}
-
-model Report {
-  id          String   @id @default(cuid())
-  title       String
-  category    String
-  description String
-  location    String
-  priority    Priority @default(medium)
-  status      Status   @default(reported)
-  photos      String[] // Assuming you store image URLs or IDs
-  name        String // From contactInfo
-  email       String
-  phone       String? // Optional
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  publisher   User   @relation(fields: [publisherId], references: [id])
-  publisherId String
 }
