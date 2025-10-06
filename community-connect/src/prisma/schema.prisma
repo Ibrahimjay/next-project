@@ -110,6 +110,8 @@ model Business {
   isFree        Boolean
   isAd          Boolean?
   originalPrice String?
+  createdAt   DateTime @default(now())
+
 }
 
 enum Priority {
