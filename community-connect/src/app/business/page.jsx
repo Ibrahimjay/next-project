@@ -27,7 +27,7 @@ export default function BusinessPage() {
       </div>
 
       {/* Listings */}
-      <div className="grid md:grid-cols-3 gap-6">
+      <div className="grid md:grid-cols-4 gap-7">
         {listings.length > 0 ? (
           listings.map((item) => (
             <div

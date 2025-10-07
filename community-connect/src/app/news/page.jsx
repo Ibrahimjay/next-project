@@ -6,7 +6,7 @@ export default async function NewsPage() {
   const newsList = await prisma.news.findMany({ orderBy: { createdAt: "desc" } });
 
   return (
-    <div className="max-w-5xl mx-auto p-6">     
+    <div className="max-w-5xl mx-auto p-6">   
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">News</h1>
         <Link href="/news/new" className="bg-blue-600 text-white px-4 py-2 rounded">+ Add</Link>

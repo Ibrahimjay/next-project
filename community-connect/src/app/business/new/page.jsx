@@ -8,6 +8,7 @@ export default function NewBusinessListingPage() {
     description: "",
     category: "sale",
     price: "",
+    image: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -27,6 +28,8 @@ export default function NewBusinessListingPage() {
       body: JSON.stringify({
         ...form,
         price: form.price ? parseFloat(form.price) : null,
+            image: form.image || "/images/placeholder.png", // fallback
+
       }),
     });
 
@@ -83,6 +86,19 @@ export default function NewBusinessListingPage() {
             <option value="job">Job/Skill</option>
           </select>
         </div>
+
+        <div>
+        <label className="block font-medium">Image URL (optional)</label>
+       <input
+          type="text"
+          name="image"
+          value={form.image}
+          onChange={handleChange}
+          className="w-full p-2 border rounded"
+          placeholder="Enter image URL or leave empty"
+        />
+        </div>
+
 
         <div>
           <label className="block font-medium">Price (optional)</label>
