@@ -2,8 +2,18 @@
 
 import Layout from "@/components/Layout";
 import { useState } from "react";
+import {
+  Dropzone,
+  DropzoneContent,
+  DropzoneEmptyState,
+} from "@/components/ui/shadcn-io/dropzone";
+
+import { storage } from "@/lib/appwrite";
+import { ID } from "appwrite";
 
 export default function NewBusinessListingPage() {
+  const [files, setFiles] = useState([]);
+
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -14,6 +24,11 @@ export default function NewBusinessListingPage() {
 
   const [loading, setLoading] = useState(false);
 
+  const handleDrop = (files) => {
+    console.log("Dropped files:", files);
+    setFiles(files);
+  };
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm({ ...form, [name]: value });
@@ -23,28 +38,48 @@ export default function NewBusinessListingPage() {
     e.preventDefault();
     setLoading(true);
 
-    const res = await fetch("/api/business", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...form,
-        price: form.price ? parseFloat(form.price) : null,
-        image: form.image || "/images/placeholder.png", // fallback
-      }),
-    });
+    try {
+      console.log("appwrite payload", files[0]);
+      const result = await storage.createFile(
+        process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID,
+        ID.unique(),
+        files[0]
+      );
 
-    setLoading(false);
+      const viewUrl = storage.getFileView(
+        process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID,
+        result.$id
+      );
+      const res = await fetch("/api/business", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...form,
+          price: form.price ? parseFloat(form.price) : null,
+          image: viewUrl || "/images/placeholder.png", // fallback
+        }),
+      });
 
-    if (res.ok) {
-      alert("Listing added successfully!");
-      setForm({ title: "", description: "", category: "sale", price: "" });
-    } else {
-      alert("Failed to add listing.");
+      if (res.ok) {
+        alert("Listing added successfully!");
+        setForm({
+          title: "",
+          description: "",
+          category: "sale",
+          price: "",
+        });
+      } else {
+        alert("Failed to add listing.");
+      }
+    } catch (error) {
+      console.warn(error);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <Layout>
+    <>
       <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow rounded-lg">
         <h1 className="text-2xl font-bold mb-4">Add New Business Listing</h1>
 
@@ -88,17 +123,18 @@ export default function NewBusinessListingPage() {
             </select>
           </div>
 
-          <div>
-            <label className="block font-medium">Image URL (optional)</label>
-            <input
-              type="text"
-              name="image"
-              value={form.image}
-              onChange={handleChange}
-              className="w-full p-2 border rounded"
-              placeholder="Enter image URL or leave empty"
-            />
-          </div>
+          <Dropzone
+            accept={{ "image/*": [] }}
+            maxFiles={10}
+            maxSize={1024 * 1024 * 10}
+            minSize={1024}
+            onDrop={handleDrop}
+            onError={console.error}
+            src={files}
+          >
+            <DropzoneEmptyState />
+            <DropzoneContent />
+          </Dropzone>
 
           <div>
             <label className="block font-medium">Price (optional)</label>
@@ -122,6 +158,6 @@ export default function NewBusinessListingPage() {
           </button>
         </form>
       </div>
-    </Layout>
+    </>
   );
 }
