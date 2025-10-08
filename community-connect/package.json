@@ -16,7 +16,7 @@
     "db:reset": "prisma migrate reset --schema src/prisma/schema.prisma"
   },
   "prisma": {
-    "seed": "node src/prisma/seeds/news.cjs"
+    "seed": "node src/prisma/seeds/seed.js"
   },
   "dependencies": {
     "@headlessui/react": "^1.7.17",

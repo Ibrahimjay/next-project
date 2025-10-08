@@ -499,28 +499,7 @@ const IssueReportingPage = () => {
               </div>
             </div>
 
-            {/* Help & Tips */}
-            <div className="bg-white rounded-xl shadow-lg p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Reporting Tips</h3>
-              <ul className="space-y-3 text-sm text-gray-600">
-                <li className="flex items-start space-x-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                  <span>Be specific about the location to help us find and fix the issue quickly</span>
-                </li>
-                <li className="flex items-start space-x-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                  <span>Include photos when possible - they help us understand the problem better</span>
-                </li>
-                <li className="flex items-start space-x-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                  <span>Choose the right priority level to ensure urgent issues get immediate attention</span>
-                </li>
-                <li className="flex items-start space-x-2">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                  <span>Check if the issue has already been reported to avoid duplicates</span>
-                </li>
-              </ul>
-            </div>
+           
           </div>
         </div>
       </div>
