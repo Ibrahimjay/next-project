@@ -319,7 +319,7 @@ const IssueReportingPage = () => {
   }
 
   return (
-    <Layout>
+    <>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50">
         {/* Header */}
         <header className="bg-white shadow-sm border-b">
@@ -745,7 +745,7 @@ const IssueReportingPage = () => {
           </div>
         </div>
       </div>{" "}
-    </Layout>
+    </>
   );
 };
 

@@ -30,7 +30,7 @@ export default function NewsPage() {
   console.log("session: ", session);
 
   return (
-    <Layout>
+    <>
       <div className="max-w-5xl mx-auto p-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">News</h1>
@@ -81,6 +81,6 @@ export default function NewsPage() {
           ))}
         </div>
       </div>
-    </Layout>
+    </>
   );
 }

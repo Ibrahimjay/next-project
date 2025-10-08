@@ -35,7 +35,7 @@ const Page = () => {
   console.log(session);
   console.log(data);
   return (
-    <Layout>
+    <>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Card className="mx-6 p-3  rounded-md flex flex-col gap-2">
           <div>
@@ -114,7 +114,7 @@ const Page = () => {
           </div>
         )}
       </div>
-    </Layout>
+    </>
   );
 };
 

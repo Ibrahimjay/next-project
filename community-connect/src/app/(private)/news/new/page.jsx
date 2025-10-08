@@ -48,7 +48,7 @@ export default function NewsNewPage() {
   }
 
   return (
-    <Layout>
+    <>
       <div className="max-w-3xl mx-auto p-6">
         <h1 className="text-2xl font-bold mb-4">Create News</h1>
 
@@ -95,6 +95,6 @@ export default function NewsNewPage() {
           </div>
         </form>
       </div>
-    </Layout>
+    </>
   );
 }
