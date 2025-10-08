@@ -1,13 +1,33 @@
 "use client";
 // src/app/news/page.jsx
 import Layout from "@/components/Layout";
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { UserRole } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
+import { getSession, useSession } from "next-auth/react";
 import Link from "next/link";
 
-export default async function NewsPage() {
-  const newsList = await prisma.news.findMany({
-    orderBy: { createdAt: "desc" },
+export default function NewsPage() {
+  const { data: session } = useSession();
+  // const newsList = await prisma.news.findMany({
+  //   orderBy: { createdAt: "desc" },
+  // });
+
+  const { data: newsList } = useQuery({
+    queryKey: ["news"],
+    queryFn: async () => {
+      const response = await fetch(`/api/news/`);
+      const data = await response.json();
+
+      console.log("use query news: ", data);
+      return data;
+    },
   });
+
+  console.log("data news: ", newsList);
+
+  console.log("session: ", session);
 
   return (
     <Layout>
@@ -16,16 +36,18 @@ export default async function NewsPage() {
           <h1 className="text-3xl font-bold">News</h1>
           <Link
             href="/news/new"
-            className="bg-blue-600 text-white px-4 py-2 rounded"
+            className={`bg-blue-600 text-white px-4 py-2 rounded ${
+              session?.user?.role !== UserRole.admin && "hidden"
+            }`}
           >
             + Add
           </Link>
         </div>
 
-        {newsList.length === 0 && <p>No news yet.</p>}
+        {newsList?.length === 0 && <p>No news yet.</p>}
 
         <div className="grid gap-6">
-          {newsList.map((n) => (
+          {newsList?.map((n) => (
             <article
               key={n.id}
               className="border rounded-md overflow-hidden shadow-sm"

@@ -7,6 +7,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum UserRole {
+  user
+  admin
+}
+
 model User {
   id           String    @id @default(cuid())
   email        String    @unique
@@ -19,7 +24,7 @@ model User {
   verified     Boolean   @default(false)
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
-  role         String    @default("user")
+  role         UserRole  @default(user)
   comments     Comment[]
   likes        Like[]
   news         News[]
@@ -110,8 +115,7 @@ model Business {
   isFree        Boolean
   isAd          Boolean?
   originalPrice String?
-  createdAt   DateTime @default(now())
-
+  createdAt     DateTime @default(now())
 }
 
 enum Priority {
