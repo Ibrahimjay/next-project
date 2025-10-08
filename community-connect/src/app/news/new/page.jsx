@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Layout from "@/components/Layout";
 
 export default function NewsNewPage() {
   const router = useRouter();
@@ -32,7 +33,7 @@ export default function NewsNewPage() {
       });
 
       if (!res.ok) {
-        const err = await res.json().catch(()=>({ error: 'unknown' }));
+        const err = await res.json().catch(() => ({ error: "unknown" }));
         throw new Error(err?.error || "Failed to save news");
       }
 
@@ -47,51 +48,53 @@ export default function NewsNewPage() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Create News</h1>
+    <Layout>
+      <div className="max-w-3xl mx-auto p-6">
+        <h1 className="text-2xl font-bold mb-4">Create News</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          value={headline}
-          onChange={(e) => setHeadline(e.target.value)}
-          placeholder="Headline"
-          className="w-full border rounded p-2"
-        />
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <input
+            value={headline}
+            onChange={(e) => setHeadline(e.target.value)}
+            placeholder="Headline"
+            className="w-full border rounded p-2"
+          />
 
-        <input
-          value={image}
-          onChange={(e) => setImage(e.target.value)}
-          placeholder="Image URL (optional)"
-          className="w-full border rounded p-2"
-        />
+          <input
+            value={image}
+            onChange={(e) => setImage(e.target.value)}
+            placeholder="Image URL (optional)"
+            className="w-full border rounded p-2"
+          />
 
-        <textarea
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-          placeholder="Content"
-          rows={8}
-          className="w-full border rounded p-2"
-        />
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Content"
+            rows={8}
+            className="w-full border rounded p-2"
+          />
 
-        <input
-          value={source}
-          onChange={(e) => setSource(e.target.value)}
-          placeholder="Source (optional)"
-          className="w-full border rounded p-2"
-        />
+          <input
+            value={source}
+            onChange={(e) => setSource(e.target.value)}
+            placeholder="Source (optional)"
+            className="w-full border rounded p-2"
+          />
 
-        {error && <p className="text-red-600">{error}</p>}
+          {error && <p className="text-red-600">{error}</p>}
 
-        <div className="flex gap-2">
-          <button
-            type="submit"
-            disabled={loading}
-            className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
-          >
-            {loading ? "Posting..." : "Post News"}
-          </button>
-        </div>
-      </form>
-    </div>
+          <div className="flex gap-2">
+            <button
+              type="submit"
+              disabled={loading}
+              className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50"
+            >
+              {loading ? "Posting..." : "Post News"}
+            </button>
+          </div>
+        </form>
+      </div>
+    </Layout>
   );
 }

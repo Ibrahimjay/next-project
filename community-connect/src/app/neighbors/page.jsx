@@ -1,158 +1,172 @@
-'use client';
+"use client";
 
-import React, { useState } from 'react';
-import { 
-  HeartIcon, 
-  ChatBubbleLeftIcon, 
-  ShareIcon, 
+import React, { useState } from "react";
+import {
+  HeartIcon,
+  ChatBubbleLeftIcon,
+  ShareIcon,
   EllipsisHorizontalIcon,
   ChevronLeftIcon,
-  CheckBadgeIcon
-} from '@heroicons/react/24/outline';
-import { HeartIcon as HeartSolidIcon } from '@heroicons/react/24/solid';
-import Image from 'next/image';
-import Layout from '@/components/Layout';
+  CheckBadgeIcon,
+} from "@heroicons/react/24/outline";
+import { HeartIcon as HeartSolidIcon } from "@heroicons/react/24/solid";
+import Image from "next/image";
+import Layout from "@/components/Layout";
 
 // Sample news data
 const sampleNews = [
   {
     id: 1,
     publisher: {
-      name: 'abc7NY',
-      logo: '/api/placeholder/40/40',
+      name: "abc7NY",
+      logo: "/api/placeholder/40/40",
       verified: true,
-      type: 'Local publisher'
+      type: "Local publisher",
     },
-    timePosted: '17 hr ago',
-    headline: '7 On Your Side helps Brooklyn man secure late father\'s retirement funds',
-    image: '/api/placeholder/600/400',
-    content: 'A Brooklyn man struggled for months to access his late father\'s retirement funds until 7 On Your Side stepped in to help navigate the complex process.',
+    timePosted: "17 hr ago",
+    headline:
+      "7 On Your Side helps Brooklyn man secure late father's retirement funds",
+    image: "/api/placeholder/600/400",
+    content:
+      "A Brooklyn man struggled for months to access his late father's retirement funds until 7 On Your Side stepped in to help navigate the complex process.",
     likes: 18,
     comments: 4,
     isLiked: false,
-    source: 'abc7ny.com'
+    source: "abc7ny.com",
   },
   {
     id: 2,
     publisher: {
-      name: 'Amazon Hub',
-      logo: '/api/placeholder/40/40',
+      name: "Amazon Hub",
+      logo: "/api/placeholder/40/40",
       verified: false,
-      type: 'Sponsored'
+      type: "Sponsored",
     },
-    timePosted: '',
-    headline: 'Discover new income for your business, right next door',
-   image: '/images/news.jpg',
-    content: 'Amazon Hub Delivery is looking for New York partners to make local deliveries and earn extra money for their businesses.',
+    timePosted: "",
+    headline: "Discover new income for your business, right next door",
+    image: "/images/news.jpg",
+    content:
+      "Amazon Hub Delivery is looking for New York partners to make local deliveries and earn extra money for their businesses.",
     likes: 0,
     comments: 0,
     isLiked: false,
     isSponsored: true,
-    ctaText: 'see more'
+    ctaText: "see more",
   },
   {
     id: 3,
     publisher: {
-      name: 'NY1 News',
-      logo: '/api/placeholder/40/40',
+      name: "NY1 News",
+      logo: "/api/placeholder/40/40",
       verified: true,
-      type: 'Local publisher'
+      type: "Local publisher",
     },
-    timePosted: '2 hr ago',
-    headline: 'MTA announces weekend service changes affecting Brooklyn and Queens lines',
-    image: '/api/placeholder/600/400',
-    content: 'Subway riders should expect delays this weekend as the MTA performs maintenance work on several key lines connecting Brooklyn and Queens.',
+    timePosted: "2 hr ago",
+    headline:
+      "MTA announces weekend service changes affecting Brooklyn and Queens lines",
+    image: "/api/placeholder/600/400",
+    content:
+      "Subway riders should expect delays this weekend as the MTA performs maintenance work on several key lines connecting Brooklyn and Queens.",
     likes: 32,
     comments: 12,
     isLiked: false,
-    source: 'ny1.com'
+    source: "ny1.com",
   },
   {
     id: 4,
     publisher: {
-      name: 'Brooklyn Paper',
-      logo: '/api/placeholder/40/40',
+      name: "Brooklyn Paper",
+      logo: "/api/placeholder/40/40",
       verified: true,
-      type: 'Local publisher'
+      type: "Local publisher",
     },
-    timePosted: '4 hr ago',
-    headline: 'New community garden opens in Prospect Heights, residents celebrate',
-    image: '/api/placeholder/600/400',
-    content: 'Local residents gathered yesterday to celebrate the opening of a new community garden that will provide fresh produce and green space for the neighborhood.',
+    timePosted: "4 hr ago",
+    headline:
+      "New community garden opens in Prospect Heights, residents celebrate",
+    image: "/api/placeholder/600/400",
+    content:
+      "Local residents gathered yesterday to celebrate the opening of a new community garden that will provide fresh produce and green space for the neighborhood.",
     likes: 45,
     comments: 8,
     isLiked: false,
-    source: 'brooklynpaper.com'
+    source: "brooklynpaper.com",
   },
   {
     id: 5,
     publisher: {
-      name: 'PIX11 News',
-      logo: '/api/placeholder/40/40',
+      name: "PIX11 News",
+      logo: "/api/placeholder/40/40",
       verified: true,
-      type: 'Local publisher'
+      type: "Local publisher",
     },
-    timePosted: '6 hr ago',
-    headline: 'Local restaurant owner creates scholarship fund for neighborhood students',
-    image: '/api/placeholder/600/400',
-    content: 'Maria Rodriguez, owner of Casa Bella restaurant, announced a new scholarship program to help local high school students pursue higher education.',
+    timePosted: "6 hr ago",
+    headline:
+      "Local restaurant owner creates scholarship fund for neighborhood students",
+    image: "/api/placeholder/600/400",
+    content:
+      "Maria Rodriguez, owner of Casa Bella restaurant, announced a new scholarship program to help local high school students pursue higher education.",
     likes: 89,
     comments: 23,
     isLiked: true,
-    source: 'pix11.com'
+    source: "pix11.com",
   },
   {
     id: 6,
     publisher: {
-      name: 'Community Board 8',
-      logo: '/api/placeholder/40/40',
+      name: "Community Board 8",
+      logo: "/api/placeholder/40/40",
       verified: true,
-      type: 'Official announcement'
+      type: "Official announcement",
     },
-    timePosted: '8 hr ago',
-    headline: 'Street cleaning schedule changes for holiday weekend',
-    image: '/api/placeholder/600/400',
-    content: 'Please note that alternate side parking rules will be suspended on Monday, October 14th in observance of Columbus Day. Regular schedule resumes Tuesday.',
+    timePosted: "8 hr ago",
+    headline: "Street cleaning schedule changes for holiday weekend",
+    image: "/api/placeholder/600/400",
+    content:
+      "Please note that alternate side parking rules will be suspended on Monday, October 14th in observance of Columbus Day. Regular schedule resumes Tuesday.",
     likes: 12,
     comments: 3,
     isLiked: false,
-    isPinned: true
+    isPinned: true,
   },
   {
     id: 7,
     publisher: {
-      name: 'Gothamist',
-      logo: '/api/placeholder/40/40',
+      name: "Gothamist",
+      logo: "/api/placeholder/40/40",
       verified: true,
-      type: 'Local publisher'
+      type: "Local publisher",
     },
-    timePosted: '10 hr ago',
-    headline: 'NYC launches new initiative to improve neighborhood safety',
-    image: '/api/placeholder/600/400',
-    content: 'The city announced a comprehensive plan to increase lighting, improve crosswalks, and add more community liaisons in residential areas.',
+    timePosted: "10 hr ago",
+    headline: "NYC launches new initiative to improve neighborhood safety",
+    image: "/api/placeholder/600/400",
+    content:
+      "The city announced a comprehensive plan to increase lighting, improve crosswalks, and add more community liaisons in residential areas.",
     likes: 156,
     comments: 34,
     isLiked: false,
-    source: 'gothamist.com'
-  }
+    source: "gothamist.com",
+  },
 ];
 
 export default function LocalNewsPage() {
   const [news, setNews] = useState(sampleNews);
 
   const toggleLike = (id) => {
-    setNews(news.map(item => 
-      item.id === id ? { 
-        ...item, 
-        isLiked: !item.isLiked,
-        likes: item.isLiked ? item.likes - 1 : item.likes + 1
-      } : item
-    ));
+    setNews(
+      news.map((item) =>
+        item.id === id
+          ? {
+              ...item,
+              isLiked: !item.isLiked,
+              likes: item.isLiked ? item.likes - 1 : item.likes + 1,
+            }
+          : item
+      )
+    );
   };
 
   const NewsCard = ({ newsItem }) => {
     return (
-      
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 overflow-hidden hover:shadow-md transition-shadow">
         {/* Header */}
         <div className="p-4 pb-3">
@@ -169,7 +183,7 @@ export default function LocalNewsPage() {
                   <CheckBadgeIcon className="absolute -bottom-1 -right-1 h-4 w-4 text-blue-500 bg-white rounded-full" />
                 )}
               </div>
-              
+
               {/* Publisher Info */}
               <div>
                 <div className="flex items-center space-x-2">
@@ -259,8 +273,8 @@ export default function LocalNewsPage() {
               <button
                 onClick={() => toggleLike(newsItem.id)}
                 className={`flex items-center space-x-2 text-sm transition-colors ${
-                  newsItem.isLiked 
-                    ? "text-red-600" 
+                  newsItem.isLiked
+                    ? "text-red-600"
                     : "text-gray-500 hover:text-red-600"
                 }`}
               >
@@ -290,28 +304,29 @@ export default function LocalNewsPage() {
 
   return (
     <Layout>
-    <div className="max-w-2xl mx-auto px-4 py-6">
-      {/* Header */}
-      <div className="flex items-center space-x-3 mb-6">
-        <button className="p-2 hover:bg-gray-100 rounded-full">
-          <ChevronLeftIcon className="h-5 w-5 text-gray-600" />
-        </button>
-        <h1 className="text-2xl font-bold text-gray-900">Local news</h1>
-      </div>
+      <div className="max-w-2xl mx-auto px-4 py-6">
+        {/* Header */}
+        <div className="flex items-center space-x-3 mb-6">
+          <button className="p-2 hover:bg-gray-100 rounded-full">
+            <ChevronLeftIcon className="h-5 w-5 text-gray-600" />
+          </button>
+          <h1 className="text-2xl font-bold text-gray-900">Local news</h1>
+        </div>
 
-      {/* News Feed */}
-      <div className="space-y-4">
-        {news.map((newsItem) => (
-          <NewsCard key={newsItem.id} newsItem={newsItem} />
-        ))}
-      </div>
+        {/* News Feed */}
+        <div className="space-y-4">
+          {news.map((newsItem) => (
+            <NewsCard key={newsItem.id} newsItem={newsItem} />
+          ))}
+        </div>
 
-      {/* Load More */}
-      <div className="text-center mt-8">
-        <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
-          Load More News
-        </button>
-      </div>
-    </div>  </Layout>
+        {/* Load More */}
+        <div className="text-center mt-8">
+          <button className="bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors">
+            Load More News
+          </button>
+        </div>
+      </div>{" "}
+    </Layout>
   );
 }

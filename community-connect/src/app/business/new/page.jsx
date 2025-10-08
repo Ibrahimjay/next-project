@@ -1,5 +1,6 @@
 "use client";
 
+import Layout from "@/components/Layout";
 import { useState } from "react";
 
 export default function NewBusinessListingPage() {
@@ -28,8 +29,7 @@ export default function NewBusinessListingPage() {
       body: JSON.stringify({
         ...form,
         price: form.price ? parseFloat(form.price) : null,
-            image: form.image || "/images/placeholder.png", // fallback
-
+        image: form.image || "/images/placeholder.png", // fallback
       }),
     });
 
@@ -44,83 +44,84 @@ export default function NewBusinessListingPage() {
   };
 
   return (
-    <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow rounded-lg">
-      <h1 className="text-2xl font-bold mb-4">Add New Business Listing</h1>
+    <Layout>
+      <div className="max-w-xl mx-auto mt-10 p-6 bg-white shadow rounded-lg">
+        <h1 className="text-2xl font-bold mb-4">Add New Business Listing</h1>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block font-medium">Title</label>
-          <input
-            type="text"
-            name="title"
-            value={form.title}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border rounded"
-            placeholder="e.g. Used Laptop, Plumbing Service"
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block font-medium">Title</label>
+            <input
+              type="text"
+              name="title"
+              value={form.title}
+              onChange={handleChange}
+              required
+              className="w-full p-2 border rounded"
+              placeholder="e.g. Used Laptop, Plumbing Service"
+            />
+          </div>
 
-        <div>
-          <label className="block font-medium">Description</label>
-          <textarea
-            name="description"
-            value={form.description}
-            onChange={handleChange}
-            required
-            className="w-full p-2 border rounded"
-            placeholder="Describe your item, job, or skill..."
-          />
-        </div>
+          <div>
+            <label className="block font-medium">Description</label>
+            <textarea
+              name="description"
+              value={form.description}
+              onChange={handleChange}
+              required
+              className="w-full p-2 border rounded"
+              placeholder="Describe your item, job, or skill..."
+            />
+          </div>
 
-        <div>
-          <label className="block font-medium">Category</label>
-          <select
-            name="category"
-            value={form.category}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
+          <div>
+            <label className="block font-medium">Category</label>
+            <select
+              name="category"
+              value={form.category}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+            >
+              <option value="sale">For Sale</option>
+              <option value="free">Give Away</option>
+              <option value="job">Job/Skill</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block font-medium">Image URL (optional)</label>
+            <input
+              type="text"
+              name="image"
+              value={form.image}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              placeholder="Enter image URL or leave empty"
+            />
+          </div>
+
+          <div>
+            <label className="block font-medium">Price (optional)</label>
+            <input
+              type="number"
+              step="0.01"
+              name="price"
+              value={form.price}
+              onChange={handleChange}
+              className="w-full p-2 border rounded"
+              placeholder="Enter price or leave empty"
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
           >
-            <option value="sale">For Sale</option>
-            <option value="free">Give Away</option>
-            <option value="job">Job/Skill</option>
-          </select>
-        </div>
-
-        <div>
-        <label className="block font-medium">Image URL (optional)</label>
-       <input
-          type="text"
-          name="image"
-          value={form.image}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          placeholder="Enter image URL or leave empty"
-        />
-        </div>
-
-
-        <div>
-          <label className="block font-medium">Price (optional)</label>
-          <input
-            type="number"
-            step="0.01"
-            name="price"
-            value={form.price}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            placeholder="Enter price or leave empty"
-          />
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
-        >
-          {loading ? "Adding..." : "Add Listing"}
-        </button>
-      </form>
-    </div>
+            {loading ? "Adding..." : "Add Listing"}
+          </button>
+        </form>
+      </div>
+    </Layout>
   );
 }

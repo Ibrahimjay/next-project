@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   MapPin,
   Camera,
@@ -11,8 +11,49 @@ import {
   Users,
 } from "lucide-react";
 import Layout from "@/components/Layout";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
+
+const categories = [
+  {
+    id: "roads",
+    name: "Roads & Pavements",
+    icon: "🛣️",
+    color: "bg-blue-500",
+  },
+  {
+    id: "lighting",
+    name: "Street Lighting",
+    icon: "💡",
+    color: "bg-yellow-500",
+  },
+  {
+    id: "waste",
+    name: "Waste & Recycling",
+    icon: "🗑️",
+    color: "bg-green-500",
+  },
+  {
+    id: "parks",
+    name: "Parks & Green Spaces",
+    icon: "🌳",
+    color: "bg-emerald-500",
+  },
+  {
+    id: "transport",
+    name: "Public Transport",
+    icon: "🚌",
+    color: "bg-purple-500",
+  },
+  {
+    id: "safety",
+    name: "Safety & Security",
+    icon: "⚠️",
+    color: "bg-red-500",
+  },
+  { id: "utilities", name: "Utilities", icon: "⚡", color: "bg-orange-500" },
+  { id: "other", name: "Other Issues", icon: "📋", color: "bg-gray-500" },
+];
 
 const IssueReportingPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -57,7 +98,7 @@ const IssueReportingPage = () => {
     },
   ]);
 
-  const { data, isPending } = useQuery({
+  const { data, isPending, isSuccess } = useQuery({
     queryKey: ["reportRecent"],
     queryFn: async () => {
       const response = await fetch(`/api/report/`);
@@ -66,48 +107,40 @@ const IssueReportingPage = () => {
     },
   });
 
-  console.log("report: ", data);
+  useEffect(() => {
+    if (data && isSuccess) {
+      const formattedData = data.map((i) => ({
+        id: i.id,
+        title: i.item,
+        category: i.category,
+        status: i.status,
+        data: i.createdAt,
+        priority: i.priority,
+      }));
+      setRecentReports(formattedData);
+    }
+  });
 
-  const categories = [
-    {
-      id: "roads",
-      name: "Roads & Pavements",
-      icon: "🛣️",
-      color: "bg-blue-500",
+  const { mutate } = useMutation({
+    mutationFn: async (data) => {
+      const response = await fetch(`/api/report`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error(response.statusText);
+      }
+
+      return response;
     },
-    {
-      id: "lighting",
-      name: "Street Lighting",
-      icon: "💡",
-      color: "bg-yellow-500",
-    },
-    {
-      id: "waste",
-      name: "Waste & Recycling",
-      icon: "🗑️",
-      color: "bg-green-500",
-    },
-    {
-      id: "parks",
-      name: "Parks & Green Spaces",
-      icon: "🌳",
-      color: "bg-emerald-500",
-    },
-    {
-      id: "transport",
-      name: "Public Transport",
-      icon: "🚌",
-      color: "bg-purple-500",
-    },
-    {
-      id: "safety",
-      name: "Safety & Security",
-      icon: "⚠️",
-      color: "bg-red-500",
-    },
-    { id: "utilities", name: "Utilities", icon: "⚡", color: "bg-orange-500" },
-    { id: "other", name: "Other Issues", icon: "📋", color: "bg-gray-500" },
-  ];
+    mutationKey: ["reports"],
+  });
+
+  // console.log("report: ", data);
 
   const handleInputChange = (field, value) => {
     setFormData((prev) => ({
@@ -159,30 +192,63 @@ const IssueReportingPage = () => {
 
     // Add new report to recent reports
     const newReport = {
-      id: Date.now(),
+      // id: Date.now(),
       title: formData.title,
       category: formData.category,
-      status: "reported",
-      date: "Just now",
+      description: formData.description,
+      // status: "reported",
+      // date: "Just now",
       priority: formData.priority,
+      contactInfo: formData.contactInfo,
+      location: formData.location,
     };
+
+    console.log("newReport: ", newReport);
 
     setRecentReports((prev) => [newReport, ...prev]);
 
-    // Reset form
-    setTimeout(() => {
-      setShowSuccess(false);
-      setCurrentStep(1);
-      setFormData({
-        category: "",
-        title: "",
-        description: "",
-        location: "",
-        priority: "medium",
-        photos: [],
-        contactInfo: { name: "", email: "", phone: "" },
-      });
-    }, 3000);
+    mutate(newReport, {
+      onSuccess: (data) => {
+        console.log("report: ", data);
+        setRecentReports((prev) => [
+          ...prev,
+          {
+            id: data.id,
+            title: data.title,
+            category: data.category,
+            status: data.status,
+            data: data.createdAt,
+            priority: data.priority,
+          },
+        ]);
+        setShowSuccess(false);
+        setCurrentStep(1);
+        setFormData({
+          category: "",
+          title: "",
+          description: "",
+          location: "",
+          priority: "medium",
+          photos: [],
+          contactInfo: { name: "", email: "", phone: "" },
+        });
+      },
+    });
+
+    // // Reset form
+    // setTimeout(() => {
+    //   setShowSuccess(false);
+    //   setCurrentStep(1);
+    //   setFormData({
+    //     category: "",
+    //     title: "",
+    //     description: "",
+    //     location: "",
+    //     priority: "medium",
+    //     photos: [],
+    //     contactInfo: { name: "", email: "", phone: "" },
+    //   });
+    // }, 3000);
   };
 
   const getStatusColor = (status) => {
