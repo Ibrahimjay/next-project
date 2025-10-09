@@ -1,11 +1,40 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/prisma";
+import { title } from "process";
+
+// {
+//     "id": 11,
+//     "title": "Used laptop",
+//     "category": "services",
+//     "price": "4999.99",
+//     "image": "https://picsum.photos/200/300",
+//     "location": "",
+//     "timePosted": "2025-10-08T23:51:06.077Z",
+//     "distance": 0,
+//     "isFavorited": false,
+//     "isFree": false,
+//     "isAd": false,
+//     "originalPrice": "",
+//     "createdAt": "2025-10-08T23:51:06.082Z",
+//     "userId": "cmgi63viy0000vv8o9xoydntp"
+// }
 
 // ✅ GET - fetch all listings
 export async function GET() {
   try {
     const listings = await prisma.business.findMany({
       orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        title: true,
+        category: true,
+        price: true,
+        image: true,
+        location: true,
+        user: true,
+        timePosted: true,
+        createdAt: true,
+      },
     });
     return NextResponse.json(listings);
   } catch (error) {
@@ -25,6 +54,8 @@ export async function POST(req) {
     const listing = await prisma.business.create({
       data: {
         title: data.title,
+        category: data.category,
+        description: data.description,
         price: data.price ? String(data.price) : "0",
         image: data.image || "/images/placeholder.png",
         location: data.location || "",

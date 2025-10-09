@@ -12,24 +12,32 @@ enum UserRole {
   admin
 }
 
+enum BusinessCategories {
+  sale
+  free
+  job
+  services
+}
+
 model User {
-  id           String    @id @default(cuid())
-  email        String    @unique
+  id           String     @id @default(cuid())
+  email        String     @unique
   name         String
   avatar       String?
   password     String
   address      String
   neighborhood String
   bio          String?
-  verified     Boolean   @default(false)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  role         UserRole  @default(user)
+  verified     Boolean    @default(false)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  role         UserRole   @default(user)
   comments     Comment[]
   likes        Like[]
   news         News[]
   posts        Post[]
   Report       Report[]
+  businesses   Business[]
 }
 
 model Post {
@@ -104,8 +112,10 @@ model Report {
 }
 
 model Business {
-  id            Int      @id @default(autoincrement())
+  id            Int                 @id @default(autoincrement())
   title         String
+  description   String?
+  category      BusinessCategories? @default(sale)
   price         String
   image         String?
   location      String?
@@ -115,7 +125,10 @@ model Business {
   isFree        Boolean
   isAd          Boolean?
   originalPrice String?
-  createdAt     DateTime @default(now())
+  createdAt     DateTime            @default(now())
+
+  userId String?
+  user   User?   @relation(fields: [userId], references: [id])
 }
 
 enum Priority {

@@ -5,8 +5,18 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Layout from "@/components/Layout";
 
+import {
+  Dropzone,
+  DropzoneContent,
+  DropzoneEmptyState,
+} from "@/components/ui/shadcn-io/dropzone";
+
+import { storage } from "@/lib/appwrite";
+import { ID } from "appwrite";
+
 export default function NewsNewPage() {
   const router = useRouter();
+  const [files, setFiles] = useState([]);
 
   const [headline, setHeadline] = useState("");
   const [content, setContent] = useState("");
@@ -14,6 +24,11 @@ export default function NewsNewPage() {
   const [source, setSource] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+
+  const handleDrop = (files) => {
+    console.log("Dropped files:", files);
+    setFiles(files);
+  };
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -26,10 +41,26 @@ export default function NewsNewPage() {
 
     setLoading(true);
     try {
+      console.log("appwrite payload", files[0]);
+      const result = await storage.createFile(
+        process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID,
+        ID.unique(),
+        files[0]
+      );
+
+      const viewUrl = storage.getFileView(
+        process.env.NEXT_PUBLIC_APPWRITE_BUCKET_ID,
+        result.$id
+      );
       const res = await fetch("/api/news", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ headline, content, image, source }),
+        body: JSON.stringify({
+          headline,
+          content,
+          image: viewUrl || null,
+          source,
+        }),
       });
 
       if (!res.ok) {
@@ -49,7 +80,7 @@ export default function NewsNewPage() {
 
   return (
     <>
-      <div className="max-w-3xl mx-auto p-6">
+      <div className="max-w-5xl mx-auto p-6">
         <h1 className="text-2xl font-bold mb-4">Create News</h1>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -60,12 +91,18 @@ export default function NewsNewPage() {
             className="w-full border rounded p-2"
           />
 
-          <input
-            value={image}
-            onChange={(e) => setImage(e.target.value)}
-            placeholder="Image URL (optional)"
-            className="w-full border rounded p-2"
-          />
+          <Dropzone
+            accept={{ "image/*": [] }}
+            maxFiles={10}
+            maxSize={1024 * 1024 * 10}
+            minSize={1024}
+            onDrop={handleDrop}
+            onError={console.error}
+            src={files}
+          >
+            <DropzoneEmptyState />
+            <DropzoneContent />
+          </Dropzone>
 
           <textarea
             value={content}

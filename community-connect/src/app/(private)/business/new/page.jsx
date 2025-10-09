@@ -10,9 +10,11 @@ import {
 
 import { storage } from "@/lib/appwrite";
 import { ID } from "appwrite";
+import { useRouter } from "next/navigation";
 
 export default function NewBusinessListingPage() {
   const [files, setFiles] = useState([]);
+  const router = useRouter();
 
   const [form, setForm] = useState({
     title: "",
@@ -61,15 +63,16 @@ export default function NewBusinessListingPage() {
       });
 
       if (res.ok) {
-        alert("Listing added successfully!");
+        console.log("Listing added successfully!");
         setForm({
           title: "",
           description: "",
           category: "sale",
           price: "",
         });
+        router.push("/business");
       } else {
-        alert("Failed to add listing.");
+        console("Failed to add listing.");
       }
     } catch (error) {
       console.warn(error);
@@ -120,6 +123,7 @@ export default function NewBusinessListingPage() {
               <option value="sale">For Sale</option>
               <option value="free">Give Away</option>
               <option value="job">Job/Skill</option>
+              <option value="services">Service Advert</option>
             </select>
           </div>
 
@@ -152,7 +156,7 @@ export default function NewBusinessListingPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white p-2 rounded hover:bg-blue-700"
+            className="w-full bg-blue-600 text-white disabled:bg-blue-400 p-2 rounded hover:bg-blue-700"
           >
             {loading ? "Adding..." : "Add Listing"}
           </button>

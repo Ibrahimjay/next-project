@@ -17,12 +17,14 @@ import { FaceSmileIcon } from "@heroicons/react/24/outline";
 import { useQuery } from "@tanstack/react-query";
 import { GalleryThumbnails, GalleryThumbnailsIcon, Video } from "lucide-react";
 import { useSession } from "next-auth/react";
-import React from "react";
+import React, { useState } from "react";
 import Post from "@/components/Post";
 import { PostFormCommand } from "@/components/post/command-form";
 import { client } from "@/lib/appwrite";
+import { ListingCard } from "./business/page";
 
 const Page = () => {
+  const [favorites, setFavorites] = useState(new Set());
   const { data: session, status } = useSession();
   const { data, isPending } = useQuery({
     queryKey: ["posts"],
@@ -32,8 +34,26 @@ const Page = () => {
       return data;
     },
   });
-  console.log(session);
-  console.log(data);
+
+  const { data: businesses, isPending: isBusinessPending } = useQuery({
+    queryKey: ["businesses"],
+    queryFn: async () => {
+      const response = await fetch(`/api/business/`);
+      const data = await response.json();
+      return data;
+    },
+  });
+
+  const toggleFavorite = (id) => {
+    const newFavorites = new Set(favorites);
+    if (newFavorites.has(id)) {
+      newFavorites.delete(id);
+    } else {
+      newFavorites.add(id);
+    }
+    setFavorites(newFavorites);
+  };
+
   return (
     <>
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -69,20 +89,16 @@ const Page = () => {
         <div className="mx-6 my-2">
           <Carousel className="w-full">
             <CarouselContent className="-ml-1">
-              {Array.from({ length: 5 }).map((_, index) => (
+              {businesses?.map((item, index) => (
                 <CarouselItem
                   key={index}
                   className="pl-1 md:basis-1/4 lg:basis-1/5"
                 >
-                  <div className="p-1">
-                    <Card>
-                      <CardContent className="flex aspect-square items-center justify-center p-6">
-                        <span className="text-2xl font-semibold">
-                          {index + 1}
-                        </span>
-                      </CardContent>
-                    </Card>
-                  </div>
+                  <ListingCard
+                    item={item}
+                    favorites={favorites}
+                    toggleFavorite={toggleFavorite}
+                  />
                 </CarouselItem>
               ))}
             </CarouselContent>
