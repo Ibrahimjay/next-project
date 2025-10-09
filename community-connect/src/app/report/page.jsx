@@ -664,83 +664,50 @@ const IssueReportingPage = () => {
             {/* Sidebar */}
             <div className="space-y-6">
               {/* Recent Reports */}
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Recent Reports
-                </h3>
-                <div className="space-y-3">
-                  {data ? (
-                    data.slice(0, 5).map((report) => (
-                      <div
-                        key={report.id}
-                        className={`p-3 rounded-lg border-l-4 ${getPriorityColor(
-                          report.priority
-                        )} bg-gray-50`}
-                      >
-                        <div className="flex items-start justify-between">
-                          <div className="flex-1">
-                            <h4 className="font-medium text-gray-900 text-sm">
-                              {report.title}
-                            </h4>
-                            <p className="text-xs text-gray-500 mt-1">
-                              {formatDistanceToNow(new Date(report.createdAt), {
-                                addSuffix: true,
-                              })}
-                            </p>
-                          </div>
-                          <div
-                            className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${getStatusColor(
-                              report.status
-                            )}`}
-                          >
-                            {getStatusIcon(report.status)}
-                            <span className="capitalize">{report.status}</span>
-                          </div>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <></>
-                  )}
-                </div>
-              </div>
+<div className="bg-white rounded-xl shadow-lg p-6">
+  <h3 className="text-lg font-semibold text-gray-900 mb-4">
+    Recent Reports
+  </h3>
+  <div className="space-y-3">
+    {data ? (
+      data.slice(0, 5).map((report) => (
+        <a
+          key={report.id}
+          href={`/report/${report.id}`}
+          className={`block p-3 rounded-lg border-l-4 ${getPriorityColor(
+            report.priority
+          )} bg-gray-50 hover:bg-gray-100 transition`}
+        >
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <h4 className="font-medium text-gray-900 text-sm">
+                {report.title}
+              </h4>
+              <p className="text-xs text-gray-500 mt-1">
+                {formatDistanceToNow(new Date(report.createdAt), {
+                  addSuffix: true,
+                })}
+              </p>
+            </div>
+            <div
+              className={`px-2 py-1 rounded-full text-xs font-medium flex items-center space-x-1 ${getStatusColor(
+                report.status
+              )}`}
+            >
+              {getStatusIcon(report.status)}
+              <span className="capitalize">{report.status}</span>
+            </div>
+          </div>
+        </a>
+      ))
+    ) : (
+      <></>
+    )}
+  </div>
+</div>
 
-              {/* Help & Tips
-              <div className="bg-white rounded-xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                  Reporting Tips
-                </h3>
-                <ul className="space-y-3 text-sm text-gray-600">
-                  <li className="flex items-start space-x-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                    <span>
-                      Be specific about the location to help us find and fix the
-                      issue quickly
-                    </span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                    <span>
-                      Include photos when possible - they help us understand the
-                      problem better
-                    </span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                    <span>
-                      Choose the right priority level to ensure urgent issues
-                      get immediate attention
-                    </span>
-                  </li>
-                  <li className="flex items-start space-x-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
-                    <span>
-                      Check if the issue has already been reported to avoid
-                      duplicates
-                    </span>
-                  </li>
-                </ul>
-              </div> */}
+
+             
             </div>
           </div>
         </div>

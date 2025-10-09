@@ -30,6 +30,8 @@ model User {
   news         News[]
   posts        Post[]
   Report       Report[]
+  businesses Business[]
+
 }
 
 model Post {
@@ -116,6 +118,9 @@ model Business {
   isAd          Boolean?
   originalPrice String?
   createdAt     DateTime @default(now())
+
+  userId        String?
+  user          User?     @relation(fields: [userId], references: [id])
 }
 
 enum Priority {
