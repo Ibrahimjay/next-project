@@ -3,9 +3,8 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export default async function ProductDetail({ params }) {
-  const product = await prisma.product.findUnique({
+  const product = await prisma.business.findUnique({
     where: { id: params.id },
-    include: { seller: true },
   });
 
   if (!product) return <p>Product not found.</p>;

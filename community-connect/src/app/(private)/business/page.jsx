@@ -2,19 +2,30 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Layout from "@/components/Layout";
+import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 
 export default function BusinessPage() {
-  const [listings, setListings] = useState([]);
+  // const [listings, setListings] = useState([]);
+  const router = useRouter();
+  const { data: listings } = useQuery({
+    queryKey: "businessListing",
+    queryFn: async () => {
+      const response = await fetch("/api/business");
+      const data = await response.json();
+      return data;
+    },
+  });
 
-  useEffect(() => {
-    // Fetch listings from your API
-    const fetchListings = async () => {
-      const res = await fetch("/api/business");
-      const data = await res.json();
-      setListings(data);
-    };
-    fetchListings();
-  }, []);
+  // useEffect(() => {
+  //   // Fetch listings from your API
+  //   const fetchListings = async () => {
+  //     const res = await fetch("/api/business");
+  //     const data = await res.json();
+  //     setListings(data);
+  //   };
+  //   fetchListings();
+  // }, []);
 
   return (
     <>
@@ -32,10 +43,11 @@ export default function BusinessPage() {
 
         {/* Listings */}
         <div className="grid md:grid-cols-4 gap-7">
-          {listings.length > 0 ? (
-            listings.map((item) => (
+          {listings?.length > 0 ? (
+            listings?.map((item) => (
               <div
                 key={item.id}
+                onClick={() => router.push(`/business/${item.id}`)}
                 className="border rounded-lg p-4 shadow hover:shadow-lg transition"
               >
                 <h2 className="font-semibold text-lg">{item.title}</h2>

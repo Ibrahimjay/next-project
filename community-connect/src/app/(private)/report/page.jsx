@@ -13,6 +13,7 @@ import {
 import Layout from "@/components/Layout";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { formatDistanceToNow } from "date-fns";
+import { useRouter } from "next/navigation";
 
 const categories = [
   {
@@ -55,8 +56,48 @@ const categories = [
   { id: "other", name: "Other Issues", icon: "📋", color: "bg-gray-500" },
 ];
 
+const getStatusColor = (status) => {
+  switch (status) {
+    case "reported":
+      return "bg-yellow-100 text-yellow-800";
+    case "in-progress":
+      return "bg-blue-100 text-blue-800";
+    case "resolved":
+      return "bg-green-100 text-green-800";
+    default:
+      return "bg-gray-100 text-gray-800";
+  }
+};
+
+const getStatusIcon = (status) => {
+  switch (status) {
+    case "reported":
+      return <Clock className="w-4 h-4" />;
+    case "in-progress":
+      return <AlertCircle className="w-4 h-4" />;
+    case "resolved":
+      return <CheckCircle className="w-4 h-4" />;
+    default:
+      return <Clock className="w-4 h-4" />;
+  }
+};
+
+const getPriorityColor = (priority) => {
+  switch (priority) {
+    case "high":
+      return "border-l-red-500";
+    case "medium":
+      return "border-l-yellow-500";
+    case "low":
+      return "border-l-green-500";
+    default:
+      return "border-l-gray-500";
+  }
+};
+
 const IssueReportingPage = () => {
   const [currentStep, setCurrentStep] = useState(1);
+  const router = useRouter();
   const [formData, setFormData] = useState({
     category: "",
     title: "",
@@ -119,7 +160,7 @@ const IssueReportingPage = () => {
       }));
       setRecentReports(formattedData);
     }
-  });
+  }, [data, isSuccess, setRecentReports]);
 
   const { mutate } = useMutation({
     mutationFn: async (data) => {
@@ -249,45 +290,6 @@ const IssueReportingPage = () => {
     //     contactInfo: { name: "", email: "", phone: "" },
     //   });
     // }, 3000);
-  };
-
-  const getStatusColor = (status) => {
-    switch (status) {
-      case "reported":
-        return "bg-yellow-100 text-yellow-800";
-      case "in-progress":
-        return "bg-blue-100 text-blue-800";
-      case "resolved":
-        return "bg-green-100 text-green-800";
-      default:
-        return "bg-gray-100 text-gray-800";
-    }
-  };
-
-  const getStatusIcon = (status) => {
-    switch (status) {
-      case "reported":
-        return <Clock className="w-4 h-4" />;
-      case "in-progress":
-        return <AlertCircle className="w-4 h-4" />;
-      case "resolved":
-        return <CheckCircle className="w-4 h-4" />;
-      default:
-        return <Clock className="w-4 h-4" />;
-    }
-  };
-
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case "high":
-        return "border-l-red-500";
-      case "medium":
-        return "border-l-yellow-500";
-      case "low":
-        return "border-l-green-500";
-      default:
-        return "border-l-gray-500";
-    }
   };
 
   if (showSuccess) {
@@ -672,6 +674,10 @@ const IssueReportingPage = () => {
                   {data ? (
                     data.slice(0, 5).map((report) => (
                       <div
+                        onClick={() => {
+                          console.log("report: ", report.title);
+                          router.push(`/report/${report.id}`);
+                        }}
                         key={report.id}
                         className={`p-3 rounded-lg border-l-4 ${getPriorityColor(
                           report.priority

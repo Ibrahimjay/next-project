@@ -7,9 +7,11 @@ import { UserRole } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import { getSession, useSession } from "next-auth/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export default function NewsPage() {
   const { data: session } = useSession();
+  const router = useRouter();
   // const newsList = await prisma.news.findMany({
   //   orderBy: { createdAt: "desc" },
   // });
@@ -51,6 +53,7 @@ export default function NewsPage() {
             <article
               key={n.id}
               className="border rounded-md overflow-hidden shadow-sm"
+              onClick={() => router.push(`/news/${n.id}`)}
             >
               {n.image && (
                 // use <img> to avoid Next.js external image config issues for now

@@ -3,9 +3,9 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 export default async function IssueDetail({ params }) {
-  const issue = await prisma.issue.findUnique({
+  const issue = await prisma.report.findUnique({
     where: { id: params.id },
-    include: { reporter: true, community: true },
+    include: { publisher: true },
   });
 
   if (!issue) return <p>Issue not found.</p>;
@@ -20,10 +20,10 @@ export default async function IssueDetail({ params }) {
       <h1 className="text-2xl font-bold mb-2">{issue.title}</h1>
       <p className="text-gray-700 mb-4">{issue.description}</p>
       <p className="text-sm text-gray-500 mb-1">
-        Reported by: {issue.reporter?.name}
+        Reported by: {issue.publisher?.name}
       </p>
       <p className="text-sm text-gray-500">
-        Location: {issue.community?.name}
+        Location: {issue.publisher?.neighborhood}
       </p>
     </div>
   );
